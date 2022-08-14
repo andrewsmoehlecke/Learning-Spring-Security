@@ -12,30 +12,51 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import com.project.springsecurity.entities.dtos.UserFullDto;
+
+import lombok.Data;
+import lombok.ToString;
+
 @Entity
+@Data
+@ToString
 public class User {
     @Id
-    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(unique = true)
     private String username;
 
     @Column
     private String password;
+
+    @Column
+    private String email;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
     @Enumerated(EnumType.STRING)
     private Set<Roles> roles = new HashSet<>();
 
+    public User() {
+    }
+
+    public User(UserFullDto dto) {
+        this.id = dto.getId();
+        this.username = dto.getUsername();
+        this.password = dto.getPassword();
+        this.email = dto.getEmail();
+    }
+
     public enum Roles {
-        ROLE_ADMIN("ADMIN"), ROLE_DEFAULT("DEFAULT");
+        ROLE_ADMIN("ADMIN"), ROLE_USER("USER");
 
         private final String role;
 
@@ -48,48 +69,15 @@ public class User {
         }
     }
 
-    public Set<Roles> getRoles() {
-        return roles;
-    }
-
     public List<String> getRolesString() {
         return roles.stream().map(Roles::toString).collect(Collectors.toList());
-    }
-
-    public void setRoles(Set<Roles> r) {
-        roles = r;
     }
 
     public boolean hasRole(Roles r) {
         return roles.contains(r);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", password=" + password + ", roles=" + roles + ", username=" + username + "]";
+    public void addRole(Roles r) {
+        roles.add(r);
     }
 }
