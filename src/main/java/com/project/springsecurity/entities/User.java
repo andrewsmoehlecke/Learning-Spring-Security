@@ -40,6 +40,9 @@ public class User {
     @Column
     private String email;
 
+    @Column
+    private boolean enabled = true;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
     @Enumerated(EnumType.STRING)
@@ -79,5 +82,11 @@ public class User {
 
     public void addRole(Roles r) {
         roles.add(r);
+    }
+
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email
+                + ", enabled=" + enabled + ", roles=" + roles + "]";
     }
 }

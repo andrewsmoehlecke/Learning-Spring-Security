@@ -1,5 +1,6 @@
 package com.project.springsecurity.controllers;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,14 +62,14 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<UserFullDto>> getAllUsers() {
+    public ResponseEntity<List<UserFullDto>> getAllUsers(Principal user) {
         log.info("GET /user/all");
 
         List<User> allUsers = userService.findAll();
         List<UserFullDto> allUsersDto = new ArrayList<>();
 
-        for (User user : allUsers) {
-            allUsersDto.add(new UserFullDto(user));
+        for (User u : allUsers) {
+            allUsersDto.add(new UserFullDto(u));
         }
 
         return new ResponseEntity<>(allUsersDto, HttpStatus.OK);
